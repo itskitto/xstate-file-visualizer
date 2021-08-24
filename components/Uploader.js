@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import DragNDrop from './DragNDrop'
-import UploadList from './FileList'
+import UploadList from './UploadList'
+import { uploadToFirebase } from '../utils/uploadToFirebase'
 
 function Uploader() {
   const [files, setFiles] = useState([]);
@@ -11,17 +12,20 @@ function Uploader() {
 
   const selectFiles = useCallback(acceptedFiles => {
     acceptedFiles.map(file => {
-      setFiles(prevState => [...prevState,{name: file.name, id: file.path}])
+      setFiles(prevState => [...prevState,{name: file.name, id: file.path, file: file}])
     });
   }, []);
 
   const uploadFiles = useCallback(() => {
     files.map(file => {
       console.log(`Uploaded ${file.name}`);
+      console.log(file.file);
+
+      uploadToFirebase(file);
     })
 
     setFiles([]);
-  }, [])
+  }, [files])
 
   return (
     <>
